@@ -22,10 +22,10 @@ public class BrandController {
     private BrandService brandService;
 
     /**
-     * 查询全部商品
+     * 分页查询全部商品http://localhost:9100/brand/testPage.do?page=1&rows=5
      */
-    @GetMapping("/findAll")
-    public List<TbBrand> findAllBrand(){
-        return brandService.findAll();
+    @GetMapping("/testPage")
+    public List<TbBrand> findAllpages(Integer page,Integer rows){
+        return (List<TbBrand>) brandService.findPage(page,rows).getRows();
     }
 }

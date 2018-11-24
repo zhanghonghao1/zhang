@@ -3,8 +3,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.pinyougou.mapper.BrandMapper">
 
-    <!--查询全部商品-->
+    <!--查询全部商品
     <select id="findAll" resultType="TbBrand">
         select * from tb_brand
-    </select>
+    </select>-->
 </mapper>

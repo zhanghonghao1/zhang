@@ -12,15 +12,18 @@
     <artifactId>pinyougou-dao</artifactId>
 
     <dependencies>
+        <!--依赖实体类-->
         <dependency>
             <groupId>com.pinyougou</groupId>
             <artifactId>pinyougou-pojo</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!--spring依赖-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
         </dependency>
+        <!--jdbc依赖-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
