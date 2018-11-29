@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <!--配置不需要登录可以访问的-->
+    <http pattern="/login.html" security="none"/>
+    <http pattern="/css/**" security="none"/>
+    <http pattern="/img/**" security="none"/>
+    <http pattern="/js/**" security="none"/>
+    <http pattern="/plugins/**" security="none"/>
+    <!--配置登录并有权限才能访问-->
+    <http use-expressions="false">
+        <!--拥有USER角色的可以任意访问     intercept-url表示拦截页面-->
+        <intercept-url pattern="/**" access="ROLE_USER"/>
+        <!--表单登录信息     form-login 开启表单登录       login-page: 指定登录页面
+            default-target-url：指定了成功进行身份验证和授权后默认呈现给用户的页面。
+            authentication-failure-url：指定了身份验证失败时跳转到的页面。
+            always-use-default-target：指定了是否在身份验证通过后总是跳转到的页面-->
+        <form-login login-page="/login.html" default-target-url="/admin/index.html"
+                    authentication-failure-url="/login.html" always-use-default-target="true"/>
+        <!--禁止跨站请求伪造校验-->
+        <csrf disabled="true"/>
+        <!-- 如果使用了 iframe 等框架，希望跳转也是在框架内跳转的话 -->
+        <headers>
+            <frame-options policy="SAMEORIGIN"/>
+        </headers>
+
+        <!--注销-->
+        <logout></logout>
+    </http>
+    <!--认证管理器-->
+    <authentication-manager>
+        <authentication-provider>
+            <user-service>
+                <!--拥有角色的用户名和密码-->
+                <user name="admin" password="123456" authorities="ROLE_USER"/>
+            </user-service>
+        </authentication-provider>
+    </authentication-manager>
+
+</beans:beans>

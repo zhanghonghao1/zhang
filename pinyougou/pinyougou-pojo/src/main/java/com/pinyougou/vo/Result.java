@@ -2,8 +2,8 @@ package com.pinyougou.vo;
 
 /*执行结果实体类*/
 public class Result {
-    private Boolean success;
-    private String message;
+    private Boolean success;//执行是否成功
+    private String message;//返回的语句
 
     public Result(Boolean success, String message) {
         this.success = success;

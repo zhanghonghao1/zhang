@@ -5,6 +5,7 @@ app.service("specificationService",function ($http) {
         return $http.get("../specification/findAll.do");
     };
 
+    //查询全部规格
     this.findPage = function (page, rows) {
         return $http.get("../specification/findPage.do?page=" + page + "&rows=" + rows);
     };

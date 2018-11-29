@@ -71,7 +71,7 @@ app.controller("typeTemplateController", function ($scope, $controller, typeTemp
 
     };
 
-    //查询品牌列表
+    //查询品牌列表,   需要id和品牌
     $scope.brandList = {data:[]};//初始化
     $scope.findBrandList = function(){
         brandService.selectOptionList().success(function (response) {
