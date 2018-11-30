@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /*获取登录人信息控制器*/
 @RequestMapping("/login")
 @RestController
