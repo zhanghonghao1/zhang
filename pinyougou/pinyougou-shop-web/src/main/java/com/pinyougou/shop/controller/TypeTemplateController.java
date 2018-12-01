@@ -1,44 +1,37 @@
 package com.pinyougou.shop.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.pinyougou.pojo.TbGoods;
-import com.pinyougou.sellergoods.service.GoodsService;
-import com.pinyougou.vo.Goods;
+import com.pinyougou.pojo.TbTypeTemplate;
+import com.pinyougou.sellergoods.service.TypeTemplateService;
 import com.pinyougou.vo.PageResult;
 import com.pinyougou.vo.Result;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
-@RequestMapping("/goods")
+@RequestMapping("/typeTemplate")
 @RestController
-public class GoodsController {
+public class TypeTemplateController {
 
     @Reference
-    private GoodsService goodsService;
+    private TypeTemplateService typeTemplateService;
 
     @RequestMapping("/findAll")
-    public List<TbGoods> findAll() {
-        return goodsService.findAll();
+    public List<TbTypeTemplate> findAll() {
+        return typeTemplateService.findAll();
     }
 
     @GetMapping("/findPage")
     public PageResult findPage(@RequestParam(value = "page", defaultValue = "1")Integer page,
                                @RequestParam(value = "rows", defaultValue = "10")Integer rows) {
-        return goodsService.findPage(page, rows);
+        return typeTemplateService.findPage(page, rows);
     }
 
     @PostMapping("/add")
-    public Result add(@RequestBody Goods goods) {
+    public Result add(@RequestBody TbTypeTemplate typeTemplate) {
         try {
-            //将商家名称传给goods类
-            String sellerId= SecurityContextHolder.getContext().getAuthentication().getName();
-            goods.getGoods().setSellerId(sellerId);
-            //设置未提交审核状态
-            goods.getGoods().setAuditStatus("0");
-            //将所有数据保存到数据库中
-            goodsService.addGoods(goods);
+            typeTemplateService.add(typeTemplate);
             return Result.ok("增加成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,14 +40,14 @@ public class GoodsController {
     }
 
     @GetMapping("/findOne")
-    public TbGoods findOne(Long id) {
-        return goodsService.findOne(id);
+    public TbTypeTemplate findOne(Long id) {
+        return typeTemplateService.findOne(id);
     }
 
     @PostMapping("/update")
-    public Result update(@RequestBody TbGoods goods) {
+    public Result update(@RequestBody TbTypeTemplate typeTemplate) {
         try {
-            goodsService.update(goods);
+            typeTemplateService.update(typeTemplate);
             return Result.ok("修改成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -65,7 +58,7 @@ public class GoodsController {
     @GetMapping("/delete")
     public Result delete(Long[] ids) {
         try {
-            goodsService.deleteGoodsByIds(ids);
+            typeTemplateService.deleteByIds(ids);
             return Result.ok("删除成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -75,15 +68,22 @@ public class GoodsController {
 
     /**
      * 分页查询列表
-     * @param goods 查询条件
+     * @param typeTemplate 查询条件
      * @param page 页号
      * @param rows 每页大小
      * @return
      */
     @PostMapping("/search")
-    public PageResult search(@RequestBody  TbGoods goods, @RequestParam(value = "page", defaultValue = "1")Integer page,
+    public PageResult search(@RequestBody  TbTypeTemplate typeTemplate, @RequestParam(value = "page", defaultValue = "1")Integer page,
                                @RequestParam(value = "rows", defaultValue = "10")Integer rows) {
-        return goodsService.search(page, rows, goods);
+        return typeTemplateService.search(page, rows, typeTemplate);
     }
 
+    /**
+     * 根据分类模板id查询其对应的规格及其规格的选项
+     */
+    @GetMapping("/findSpecList")
+    public List<Map> findSpecList(Long id){
+        return typeTemplateService.findSpecList(id);
+    }
 }
