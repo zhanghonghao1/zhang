@@ -25,6 +25,16 @@ app.service("goodsService",function ($http) {
         return $http.get("../goods/delete.do?ids=" + selectedIds);
     };
 
+    //上架
+    this.onmarketable = function (selectedIds) {
+        return $http.get("../goods/onmarketable.do?ids=" + selectedIds);
+    };
+
+    //下架
+    this.upmarketable = function (selectedIds) {
+        return $http.get("../goods/upmarketable.do?ids=" + selectedIds);
+    };
+
     this.search = function (page, rows, searchEntity) {
         return $http.post("../goods/search.do?page=" + page + "&rows=" + rows, searchEntity);
 

@@ -92,4 +92,12 @@ app.controller("itemCatController", function ($scope, $controller, itemCatServic
         $scope.findByParentId(entity.id);
     }
 
+    //遍历模板id
+    $scope.findTypeTemplateList = {data: []};
+    $scope.findTypeTemplateList = function () {
+        typeTemplateService.selectOptionList().success(function (response) {
+            $scope.typeTemplateList = {data:response};
+        });
+    };
+
 });

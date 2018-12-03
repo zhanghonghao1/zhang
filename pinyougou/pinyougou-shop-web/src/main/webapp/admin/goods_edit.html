@@ -212,8 +212,7 @@
                                 <div class="col-md-2 title">{{spec.text}}</div>
                                 <div class="col-md-10 data">
 					                            <span ng-repeat="specOption in spec.options">
-					                            	<input type="checkbox"
-                                                           ng-checked="checkAttributeValue(spec.text, specOption.optionName)"
+					                            	<input type="checkbox" ng-checked="checkAttributeValue(spec.text, specOption.optionName)"
                                                            ng-click="updateSpecAttributes($event, spec.text, specOption.optionName);createItemList()">
                                                     {{specOption.optionName}}
 					                            </span>

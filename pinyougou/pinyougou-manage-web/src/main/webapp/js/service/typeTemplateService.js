@@ -29,4 +29,9 @@ app.service("typeTemplateService",function ($http) {
         return $http.post("../typeTemplate/search.do?page=" + page + "&rows=" + rows, searchEntity);
 
     };
+
+    //查询selectOptionList中文名称
+    this.selectOptionList=function () {
+        return $http.get("../typeTemplate/selectOptionList.do");
+    }
 });

@@ -9,12 +9,14 @@ import com.pinyougou.mapper.TypeTemplateMapper;
 import com.pinyougou.pojo.TbSpecificationOption;
 import com.pinyougou.pojo.TbTypeTemplate;
 import com.pinyougou.sellergoods.service.TypeTemplateService;
+import com.pinyougou.service.BaseService;
 import com.pinyougou.service.impl.BaseServiceImpl;
 import com.pinyougou.vo.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -68,5 +70,10 @@ public class TypeTemplateServiceImpl extends BaseServiceImpl<TbTypeTemplate> imp
            return specList;
        }
         return null;
+    }
+
+    @Override
+    public List<Map> selectOptionList() {
+        return typeTemplateMapper.selectOptionList();
     }
 }

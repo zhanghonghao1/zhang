@@ -7,7 +7,9 @@ import com.pinyougou.vo.PageResult;
 import com.pinyougou.vo.Result;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping("/typeTemplate")
 @RestController
@@ -76,6 +78,17 @@ public class TypeTemplateController {
     public PageResult search(@RequestBody  TbTypeTemplate typeTemplate, @RequestParam(value = "page", defaultValue = "1")Integer page,
                                @RequestParam(value = "rows", defaultValue = "10")Integer rows) {
         return typeTemplateService.search(page, rows, typeTemplate);
+    }
+
+    //查询selectOptionList中文名称
+    @GetMapping("/selectOptionList")
+    public List<Map> selectOptionList() {
+
+        List<Map> maps = typeTemplateService.selectOptionList();
+        System.out.println("=============================================");
+        System.out.println(maps.get(0).toString());
+        System.out.println("=============================================");
+        return typeTemplateService.selectOptionList();
     }
 
 }

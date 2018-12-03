@@ -6,6 +6,7 @@ import com.pinyougou.sellergoods.service.ItemCatService;
 import com.pinyougou.vo.PageResult;
 import com.pinyougou.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

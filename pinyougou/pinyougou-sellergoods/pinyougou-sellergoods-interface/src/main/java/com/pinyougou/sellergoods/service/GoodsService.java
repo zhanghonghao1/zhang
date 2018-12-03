@@ -15,5 +15,21 @@ public interface GoodsService extends BaseService<TbGoods> {
      */
     void addGoods(Goods goods);
 
+    //自定义逻辑删除
     void deleteGoodsByIds(Long[] ids);
+
+    //自定义根据id查询基本,描述,sku信息
+    Goods findGoodsById(Long id);
+
+    /*自定义更新商品三大信息操作*/
+    void updateGoods(Goods goods);
+
+    /*自定义更新审核状态*/
+    void updateStatus(Long[] ids, String status);
+
+    /*上架*/
+    void onmarketable(Long[] ids);
+
+    /*下架*/
+    void upmarketable(Long[] ids);
 }
