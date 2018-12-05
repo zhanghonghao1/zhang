@@ -85,9 +85,6 @@ public class TypeTemplateController {
     public List<Map> selectOptionList() {
 
         List<Map> maps = typeTemplateService.selectOptionList();
-        System.out.println("=============================================");
-        System.out.println(maps.get(0).toString());
-        System.out.println("=============================================");
         return typeTemplateService.selectOptionList();
     }
 
