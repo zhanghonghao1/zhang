@@ -1,9 +1,12 @@
 package com.pinyougou.sellergoods.service;
 
 import com.pinyougou.pojo.TbGoods;
+import com.pinyougou.pojo.TbItem;
 import com.pinyougou.service.BaseService;
 import com.pinyougou.vo.Goods;
 import com.pinyougou.vo.PageResult;
+
+import java.util.List;
 
 public interface GoodsService extends BaseService<TbGoods> {
 
@@ -32,4 +35,7 @@ public interface GoodsService extends BaseService<TbGoods> {
 
     /*下架*/
     void upmarketable(Long[] ids);
+
+    /*根据spuid查询对应的sku列表*/
+    List<TbItem> findItemListByGoodsIdsAndStatus(Long[] ids, String status);
 }

@@ -2,6 +2,8 @@ package com.pinyougou.shop.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.pinyougou.pojo.TbGoods;
+import com.pinyougou.pojo.TbItem;
+import com.pinyougou.search.service.ItemSearchService;
 import com.pinyougou.sellergoods.service.GoodsService;
 import com.pinyougou.vo.Goods;
 import com.pinyougou.vo.PageResult;
@@ -10,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FilterWriter;
+import java.util.Arrays;
 import java.util.List;
 
 @RequestMapping("/goods")
@@ -18,6 +21,8 @@ public class GoodsController{
 
     @Reference
     private GoodsService goodsService;
+    @Reference
+    private ItemSearchService itemSearchService;
 
     @RequestMapping("/findAll")
     public List<TbGoods> findAll() {
@@ -128,6 +133,10 @@ public class GoodsController{
     public Result onmarketable(Long[] ids){
         try {
             goodsService.onmarketable(ids);
+            //根据spuid查询审核通过并且已上架(1)对应的sku列表
+            List<TbItem> itemList = goodsService.findItemListByGoodsIdsAndStatus(ids, "1");
+            //更新sku数据到sku列表
+            itemSearchService.importItemList(itemList);
             return Result.ok("上架成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -143,6 +152,8 @@ public class GoodsController{
     public Result upmarketable(Long[] ids){
         try {
             goodsService.upmarketable(ids);
+            //更新sku数据到sku列表
+            itemSearchService.deleteItemByGoodsIdList(Arrays.asList(ids));
             return Result.ok("下架成功");
         } catch (Exception e) {
             e.printStackTrace();

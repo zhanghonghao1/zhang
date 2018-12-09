@@ -257,12 +257,12 @@ app.controller("goodsController", function ($scope, $controller, $location, good
     //修改商品的状态
     $scope.updateStatus = function (status) {
         if($scope.selectedIds.length < 1) {
-            alert("请先选择商品");
+            alert("请先选择商品!");
             return;
         }
-        if(confirm("确定要更新选中的商品状态吗？")){
+        if(confirm("确定要修改该商品审核状态吗？")){
             goodsService.updateStatus($scope.selectedIds, status).success(function (response) {
-                if(response.success) {
+                if(response.success==true) {
                     //刷新列表并清空选中的那些商品
                     $scope.reloadList();
                     $scope.selectedIds = [];

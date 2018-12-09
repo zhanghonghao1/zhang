@@ -179,6 +179,14 @@ public class GoodsServiceImpl extends BaseServiceImpl<TbGoods> implements GoodsS
         goodsMapper.updateByExampleSelective(tbGoods,example);
     }
 
+    /*根据spuid和查询对应的sku列表*/
+    @Override
+    public List<TbItem> findItemListByGoodsIdsAndStatus(Long[] ids, String status) {
+        Example example=new Example(TbItem.class);
+        example.createCriteria().andEqualTo("status",status).andIn("goodsId",Arrays.asList(ids));
+        return itemMapper.selectByExample(example);
+    }
+
     /**
      * 保存动态sku列表
      * @param goods 商品信息（基本、描述、sku列表）

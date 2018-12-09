@@ -2,6 +2,8 @@ package com.pinyougou.manage.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.pinyougou.pojo.TbGoods;
+import com.pinyougou.pojo.TbItem;
+import com.pinyougou.search.service.ItemSearchService;
 import com.pinyougou.sellergoods.service.GoodsService;
 import com.pinyougou.vo.Goods;
 import com.pinyougou.vo.PageResult;
@@ -9,6 +11,7 @@ import com.pinyougou.vo.Result;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RequestMapping("/goods")
@@ -17,7 +20,8 @@ public class GoodsController {
 
     @Reference
     private GoodsService goodsService;
-
+    @Reference
+    private ItemSearchService itemSearchService;
     @RequestMapping("/findAll")
     public List<TbGoods> findAll() {
         return goodsService.findAll();
@@ -81,6 +85,8 @@ public class GoodsController {
     public Result delete(Long[] ids) {
         try {
             goodsService.deleteGoodsByIds(ids);
+            //删除solr中对应商品索引数据
+            itemSearchService.deleteItemByGoodsIdList(Arrays.asList(ids));
             return Result.ok("删除成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,10 +116,21 @@ public class GoodsController {
     public Result updateStatus(Long[] ids, String status) {
         try {
             goodsService.updateStatus(ids, status);
-            return Result.ok("更新成功");
+            //商品审核状态为2的sku就更新到solr中
+            if ("2".equals(status)) {
+                //根据spuid查询审核通过并且已上架(1)对应的sku列表
+                List<TbItem> itemList = goodsService.findItemListByGoodsIdsAndStatus(ids, "1");
+                //更新sku数据到sku列表
+                itemSearchService.importItemList(itemList);
+            }
+            if ("3".equals(status)) {
+                //更新sku数据到sku列表
+                itemSearchService.deleteItemByGoodsIdList(Arrays.asList(ids));
+            }
+            return Result.ok("审核成功");
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return Result.fail("更新失败");
+        return Result.fail("审核失败");
     }
 }
