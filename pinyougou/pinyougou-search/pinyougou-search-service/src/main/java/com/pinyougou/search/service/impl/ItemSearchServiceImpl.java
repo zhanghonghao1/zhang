@@ -170,6 +170,7 @@ public class ItemSearchServiceImpl implements ItemSearchService{
                 }
             }
         }
+        //信息集合
         resultMap.put("rows",tbItems.getContent());
         //总页数
         resultMap.put("totalPages",tbItems.getTotalPages());
