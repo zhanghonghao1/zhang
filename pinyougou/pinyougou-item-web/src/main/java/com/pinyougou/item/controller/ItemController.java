@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 
-/*商品详情的处理器*/
+/*商品详情动态处理器*/
 @Controller
 public class ItemController {
 
