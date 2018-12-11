@@ -44,5 +44,5 @@
     <!--定义注册中心地址-->
     <dubbo:registry address="zookeeper://192.168.12.168:2181"/>
     <!--扫描需要使用远程服务对象的注解所在的包-->
-    <dubbo:annotation package="com.pinyougou.item.controller"/>
+    <dubbo:annotation package="com.pinyougou.item"/>
 </beans>
