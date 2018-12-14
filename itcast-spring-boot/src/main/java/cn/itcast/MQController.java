@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
-/*发送消息*/
+/*发送MQ消息*/
 @RequestMapping("/mq")
 @RestController
 public class MQController {
@@ -22,6 +22,18 @@ public class MQController {
         Map<String,String> map=new HashMap<>();
         map.put("姓名:","张宏浩");
         jmsMessagingTemplate.convertAndSend("spring.boot.map.queue",map);
+        return "发送成功";
+    }
+
+    /*发送短信mq消息*/
+    @GetMapping("/send")
+    public String sendSmsMapMsg(){
+        Map<String,String> map=new HashMap<>();
+        map.put("mobile:","张宏浩");
+        map.put("signName:","张宏浩");
+        map.put("templateCode:","张宏浩");
+        map.put("templateParam:","张宏浩");
+        jmsMessagingTemplate.convertAndSend("itcast_sms_queue",map);
         return "发送成功";
     }
 }
