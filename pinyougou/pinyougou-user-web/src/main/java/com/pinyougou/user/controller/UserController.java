@@ -7,11 +7,14 @@ import com.pinyougou.user.service.UserService;
 import com.pinyougou.vo.PageResult;
 import com.pinyougou.vo.Result;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.PatternSyntaxException;
 
 @RequestMapping("/user")
@@ -46,8 +49,8 @@ public class UserController {
                     user.setUpdated(user.getCreated());
                     //将用户密码加密
                     user.setPassword(DigestUtils.md5Hex(user.getPassword()));
-            /*BCryptPasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
-            user.setPassword(passwordEncoder.encode(user.getPassword()));*/
+                   /* BCryptPasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
+                    user.setPassword(passwordEncoder.encode(user.getPassword()));*/
                     userService.add(user);
                     result= Result.ok("注册成功");
                 }else {
@@ -125,6 +128,15 @@ public class UserController {
     public PageResult search(@RequestBody  TbUser user, @RequestParam(value = "page", defaultValue = "1")Integer page,
                                @RequestParam(value = "rows", defaultValue = "10")Integer rows) {
         return userService.search(page, rows, user);
+    }
+
+    @GetMapping("/getUsername")
+    public Map<String,Object> getUsername(){
+        Map<String,Object> map=new HashMap<>();
+        String username= SecurityContextHolder.getContext().getAuthentication().getName();
+        map.put("username",username);
+        return map;
+
     }
 
 }
