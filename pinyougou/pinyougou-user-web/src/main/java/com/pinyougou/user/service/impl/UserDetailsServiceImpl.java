@@ -16,7 +16,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
             List<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority("ROLE_SELLER"));
+            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
             //将前端传入的密码与数据库的密码进行匹配,如果一致登录认证成功
             return new User(username,"", authorities);
     }

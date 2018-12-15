@@ -10,12 +10,12 @@
        http://code.alibabatech.com/schema/dubbo
        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-   <!-- &lt;!&ndash;消费者名称&ndash;&gt;
+    <!--消费者名称-->
     <dubbo:application name="pinyougou-user-web"/>
-    &lt;!&ndash;注册中心地址&ndash;&gt;
+    <!--注册中心地址-->
     <dubbo:registry address="zookeeper://192.168.12.168:2181"/>
-    &lt;!&ndash;扫描需要使用远程服务对象的注解所在的包&ndash;&gt;
-    <dubbo:annotation package="com.pinyougou.user.service.impl"/>-->
+    <!--扫描需要使用远程服务对象的注解所在的包-->
+    <dubbo:annotation package="com.pinyougou.user.service.impl"/>
 
     <!--配置不需要登录可以访问的-->
     <http pattern="/css/**" security="none"/>
@@ -59,12 +59,16 @@
     <!--  认证管理器  -->
     <authentication-manager alias="authenticationManager">
         <authentication-provider ref="casAuthenticationProvider"/>
+        <authentication-provider user-service-ref="userDetailsService">
+            <password-encoder ref="bCryptPasswordEncoder"></password-encoder>
+        </authentication-provider>
     </authentication-manager>
+    <!--配置密码加密对象-->
+    <beans:bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></beans:bean>
     <!--  认证类  -->
     <beans:bean id="userDetailsService" class="com.pinyougou.user.service.impl.UserDetailsServiceImpl"/>
     <!--  认证提供者  -->
-    <beans:bean id="casAuthenticationProvider"
-                class="org.springframework.security.cas.authentication.CasAuthenticationProvider">
+    <beans:bean id="casAuthenticationProvider" class="org.springframework.security.cas.authentication.CasAuthenticationProvider">
         <beans:property name="authenticationUserDetailsService">
             <beans:bean
                     class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper">

@@ -48,9 +48,9 @@ public class UserController {
                     user.setCreated(new Date());
                     user.setUpdated(user.getCreated());
                     //将用户密码加密
-                    user.setPassword(DigestUtils.md5Hex(user.getPassword()));
-                   /* BCryptPasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
-                    user.setPassword(passwordEncoder.encode(user.getPassword()));*/
+                    //user.setPassword(DigestUtils.md5Hex(user.getPassword()));
+                    BCryptPasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
+                    user.setPassword(passwordEncoder.encode(user.getPassword()));
                     userService.add(user);
                     result= Result.ok("注册成功");
                 }else {
