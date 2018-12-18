@@ -26,7 +26,7 @@ public class TbAddress implements Serializable {
 
     private String address;
 
-    private String contact;
+    private String contact;//联系人
 
     private String isDefault;
 
