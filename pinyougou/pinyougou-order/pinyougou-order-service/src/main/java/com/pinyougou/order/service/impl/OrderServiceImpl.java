@@ -19,6 +19,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import tk.mybatis.mapper.entity.Example;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -142,5 +144,60 @@ public class OrderServiceImpl extends BaseServiceImpl<TbOrder> implements OrderS
         }
         //6. 返回支付日志id
         return outTradeNo;
+    }
+
+    /**
+     * 根据支付日志id查找支付日志信息
+     *
+     * @param outTradeNo
+     * @return
+     */
+    @Override
+    public TbPayLog findPayLogByOutTradeNo(String outTradeNo) {
+        return payLogMapper.selectByPrimaryKey(outTradeNo);
+    }
+
+    /**
+     * 获得商品描述
+     *
+     * @param outTradeNo
+     * @return
+     */
+    @Override
+    public List<TbOrderItem> findBody(String outTradeNo) {
+        //通过outTreadNo获得order_list
+        String order = payLogMapper.selectByPrimaryKey(outTradeNo).getOrderList();
+        System.out.println(order);
+        String[] split = order.split(",");
+        System.out.println(split);
+        Example example=new Example(TbOrderItem.class);
+        Example.Criteria criteria = example.createCriteria().andIn("orderId", Arrays.asList(split));
+        List<TbOrderItem> orderItemList = orderItemMapper.selectByExample(example);
+        return orderItemList;
+    }
+
+    /**
+     * 更新订单状态和信息
+     *
+     * @param outTradeNo
+     * @param transactionId
+     */
+    @Override
+    public void updateOrderStatus(String outTradeNo, String transactionId) {
+        //根据id查支付日志
+        TbPayLog payLog = findPayLogByOutTradeNo(outTradeNo);
+        payLog.setTradeState("1");//改为已支付
+        payLog.setPayTime(new Date());
+        payLog.setTransactionId(transactionId);
+        //1.更新支付日志的支付状态
+        payLogMapper.updateByPrimaryKeySelective(payLog);
+        //2. 更新支付日志对应的每一笔订单的支付状态
+        String[] orderIds = payLog.getOrderList().split(",");
+        TbOrder tbOrder=new TbOrder();
+        tbOrder.setPaymentTime(new Date());
+        tbOrder.setStatus("2");
+        Example example=new Example(TbOrder.class);
+        example.createCriteria().andIn("orderId", Arrays.asList(orderIds));
+        orderMapper.updateByExampleSelective(tbOrder,example);
     }
 }
