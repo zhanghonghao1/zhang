@@ -41,4 +41,14 @@ public class SellerServiceImpl extends BaseServiceImpl<TbSeller> implements Sell
 
         return new PageResult(pageInfo.getTotal(), pageInfo.getList());
     }
+
+    /**
+     * 根据用户名得到用户密码
+     *
+     * @param username
+     */
+    @Override
+    public TbSeller findOneByUsername(String username) {
+        return sellerMapper.selectByPrimaryKey(username);
+    }
 }

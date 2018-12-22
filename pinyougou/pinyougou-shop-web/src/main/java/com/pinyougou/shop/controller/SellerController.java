@@ -4,7 +4,10 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.pinyougou.pojo.TbSeller;
 import com.pinyougou.sellergoods.service.SellerService;
 import com.pinyougou.vo.PageResult;
+import com.pinyougou.vo.Password;
 import com.pinyougou.vo.Result;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -88,4 +91,28 @@ public class SellerController {
         return sellerService.search(page, rows, seller);
     }
 
+    /**
+     * 修改商家密码
+     * @param entity
+     * @return
+     */
+    @PostMapping("/changePassword")
+    public Result changePassword(@RequestBody Password entity){
+        Result result=Result.fail("密码修改失败");
+        //得到当前登录用户名
+        String username= SecurityContextHolder.getContext().getAuthentication().getName();
+        //根据用户名得到数据库中对应密码
+        TbSeller tbSeller = sellerService.findOneByUsername(username);//当前用户
+        String password = tbSeller.getPassword();//当前用户的密码
+        //调用加密对象
+        BCryptPasswordEncoder encoder=new BCryptPasswordEncoder();
+        //将原密码与数据库密码对比,相同就将新密码保存到当前用户
+        if (encoder.matches(entity.getOld(),password)){
+            //将新密码加密保存到数据库中
+            tbSeller.setPassword(encoder.encode(entity.getNewOne()));
+            sellerService.update(tbSeller);
+            result=Result.ok("密码修改成功");
+        }
+        return result;
+    }
 }

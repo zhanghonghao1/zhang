@@ -29,4 +29,9 @@ app.service("sellerService",function ($http) {
         return $http.post("../seller/search.do?page=" + page + "&rows=" + rows, searchEntity);
 
     };
+
+    //修改商家密码
+    this.changePassword = function (entity) {
+        return $http.post("../seller/changePassword.do",entity);
+    };
 });

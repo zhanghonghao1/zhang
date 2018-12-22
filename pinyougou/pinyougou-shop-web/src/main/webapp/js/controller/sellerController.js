@@ -77,4 +77,21 @@ app.controller("sellerController", function ($scope, $controller, sellerService)
         });
     };
 
+    //修改商家密码
+    $scope.changePassword=function () {
+        if ($scope.entity.newOne!=null){
+            if ($scope.entity.newOne == $scope.entity.newTwo) {
+                sellerService.changePassword($scope.entity).success(function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        location.href="/logout";
+                    }
+                })
+            }else {
+                alert("密码输入不一致!");
+            }
+        }else {
+            alert("请输入密码")
+        }
+    };
 });
