@@ -7,10 +7,12 @@ import com.pinyougou.common.util.IdWorker;
 import com.pinyougou.mapper.OrderItemMapper;
 import com.pinyougou.mapper.OrderMapper;
 import com.pinyougou.mapper.PayLogMapper;
-import com.pinyougou.pojo.TbOrder;
+import com.pinyougou.mapper.SeckillOrderMapper;
 import com.pinyougou.order.service.OrderService;
+import com.pinyougou.pojo.TbOrder;
 import com.pinyougou.pojo.TbOrderItem;
 import com.pinyougou.pojo.TbPayLog;
+import com.pinyougou.pojo.TbSeckillOrder;
 import com.pinyougou.service.impl.BaseServiceImpl;
 import com.pinyougou.vo.Cart;
 import com.pinyougou.vo.ChangeLong;
@@ -26,10 +28,12 @@ import java.util.Date;
 import java.util.List;
 
 @Service(interfaceClass = OrderService.class)
-public class OrderServiceImpl extends BaseServiceImpl<TbOrder> implements OrderService {
+public class SeckillOrderServiceImpl extends BaseServiceImpl<TbOrder> implements OrderService {
 
     @Autowired
     private OrderMapper orderMapper;
+    @Autowired
+    private SeckillOrderMapper seckillOrderMapper;
     @Autowired
     private RedisTemplate redisTemplate;
     @Autowired
@@ -85,13 +89,13 @@ public class OrderServiceImpl extends BaseServiceImpl<TbOrder> implements OrderS
             //限定只能查询自家商家的订单
             example.createCriteria().andEqualTo("sellerId",order.getSellerId());
             //根据条件查询
-            List<TbOrder> tbOrderList = orderMapper.selectByExample(example);
+            List<TbSeckillOrder> tbSeckillOrderList = seckillOrderMapper.selectByExample(example);
             List<ChangeLong> changeLongs=new ArrayList<>();
-            for (TbOrder tbOrder : tbOrderList) {
+            for (TbSeckillOrder seckillOrder : tbSeckillOrderList) {
                 ChangeLong changeLong=new ChangeLong();
-                String orderId = tbOrder.getOrderId().toString();
-                changeLong.setOrderId(orderId);
-                changeLong.setTbOrder(tbOrder);
+                String id = seckillOrder.getId().toString();
+                changeLong.setId(id);
+                changeLong.setTbSeckillOrder(seckillOrder);
                 changeLongs.add(changeLong);
 
             }

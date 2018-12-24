@@ -9,7 +9,7 @@ import com.pinyougou.vo.PageResult;
 
 import java.util.List;
 
-public interface OrderService extends BaseService<TbOrder> {
+public interface SeckillOrderService extends BaseService<TbOrder> {
 
     PageResult search(Integer page, Integer rows, TbOrder order);
 
@@ -52,5 +52,5 @@ public interface OrderService extends BaseService<TbOrder> {
      * 修改地址
      * @param
      */
-    void updateArea(TbOrder tbOrder,Long id);
+    void updateArea(TbOrder tbOrder, Long id);
 }
