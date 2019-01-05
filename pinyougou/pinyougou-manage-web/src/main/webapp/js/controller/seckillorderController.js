@@ -28,17 +28,17 @@ app.controller("seckillorderController",function ($scope,$filter,$controller,sec
         })
     };
 
-    //状态查询
-    $scope.findStatus=function (value) {
-        seckillorderService.findStatus(value).success(function (response) {
-            $scope.list = response;
-        });
-    };
-
     //根据品牌id查询品牌数据
     $scope.findOne=function (id) {
         seckillorderService.findOne(id).success(function (response) {
             $scope.enery=response;
+        });
+    };
+
+    //状态查询
+    $scope.findStatus=function (value) {
+        seckillorderService.findStatus(value).success(function (response) {
+            $scope.list = response;
         });
     };
 
@@ -68,6 +68,6 @@ app.controller("seckillorderController",function ($scope,$filter,$controller,sec
     //发票类型
     $scope.invoiceType=["普通发票","电子发票","增值税发票"];
     //订单来源
-    $scope.sourceType=["","app端","pc端","M端","微信端","手机qq端"];
+    $scope.sourceType=["app端","pc端","M端","微信端","手机qq端"];
 
 });

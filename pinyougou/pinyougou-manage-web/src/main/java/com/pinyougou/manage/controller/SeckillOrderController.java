@@ -1,11 +1,10 @@
-package com.pinyougou.shop.controller;
+package com.pinyougou.manage.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.pinyougou.order.service.SeckillOrderService;
 import com.pinyougou.pojo.TbSeckillOrder;
 import com.pinyougou.vo.ChangeLong;
 import com.pinyougou.vo.PageResult;
-import com.pinyougou.vo.Result;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +24,7 @@ public class SeckillOrderController {
         return seckillOrderService.findPage(page, rows);
     }
 
+
     @GetMapping("/findOne")
     public ChangeLong findOne(Long id) {
         TbSeckillOrder tbSeckillOrder = seckillOrderService.findOne(id);
@@ -43,7 +43,6 @@ public class SeckillOrderController {
     public List<ChangeLong> findStatus(@RequestParam String value) {
         return seckillOrderService.findStatus(value);
     }
-
 
     /*@PostMapping("/update")
     public Result update(@RequestBody TbSeckillOrder tbSeckillOrder, Long id) {
@@ -75,13 +74,13 @@ public class SeckillOrderController {
     }
 
     @PostMapping("/findAllSeckillOrder")
-    public List<ChangeLong> findAllSeckillOrderByUser() {
-        //设置只能查询自家产品
+    public List<ChangeLong> findAllSeckillOrder() {
+       /* //设置只能查询自家产品
         //获得登录商家名称
         String sellerId = SecurityContextHolder.getContext().getAuthentication().getName();
         TbSeckillOrder tbSeckillOrder=new TbSeckillOrder();
-        tbSeckillOrder.setSellerId(sellerId);
-        return seckillOrderService.findAllSeckillOrderByUser(tbSeckillOrder);
+        tbSeckillOrder.setSellerId(sellerId);*/
+        return seckillOrderService.findAllSeckillOrder();
     }
 
 }

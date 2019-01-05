@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>订单管理</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+	<script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../plugins/angularjs/angular.min.js"></script>
+
+    <script src="../plugins/angularjs/pagination.js"></script>
+    <link rel="stylesheet" href="../plugins/angularjs/pagination.css">
+
+    <script src="../js/base_pagination.js"></script>
+    <script src="../js/service/uploadService.js"></script>
+    <script src="../js/service/itemCatService.js"></script>
+    <script src="../js/service/typeTemplateService.js"></script>
+    <script src="../js/service/orderService.js"></script>
+    <script src="../js/controller/baseController.js"></script>
+    <script src="../js/controller/orderController.js"></script>
+
+</head>
+
+<body ng-app="pinyougou" ng-controller="orderController" ng-init="findAllOrder()" class="hold-transition skin-red sidebar-mini">
+  <!-- .box-body -->
+
+                    <div class="box-header with-border">
+                        <h3 class="box-title">订单管理</h3>
+                    </div>
+
+                    <div class="box-body">
+
+                        <!-- 数据表格 -->
+                        <div class="table-box">
+
+                            <!--工具栏-->
+                            <div class="pull-left">
+                                <div class="form-group form-inline">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default" onclick="window.location.reload();"><i class="fa fa-trash-o"></i> 全部订单</button>
+                                        <button type="button" class="btn btn-default" title="待支付" ng-click="findStatus('1')"><i class="fa fa-check"></i> 待支付</button>
+                                        <button type="button" class="btn btn-default" title="待发货" ng-click="findStatus('3')"><i class="fa fa-check"></i> 待发货</button>
+                                        <button type="button" class="btn btn-default" title="待评价" ng-click="findStatus('7')"><i class="fa fa-file-o"></i> 待评价</button>
+                                        <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i class="fa fa-refresh"></i> 刷新</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-tools pull-right">
+                                <div class="has-feedback">
+                                    状态：<select ng-model="searchEntity.status">
+                                    <option value="">全部</option>
+                                    <option value="1">未付款</option>
+                                    <option value="2">已付款</option>
+                                    <option value="3">未发货</option>
+                                    <option value="4">已发货</option>
+                                    <option value="5">交易成功</option>
+                                    <option value="6">交易关闭</option>
+                                    <option value="7">待评价</option>
+                                </select>
+                                    物流编号：<input ng-model="searchEntity.shippingCode">
+                                    用户id：<input ng-model="searchEntity.userId">
+                                    <button class="btn btn-default" ng-click="reloadList()" >查询</button>
+                                </div>
+                            </div>
+                            <!--工具栏/-->
+
+			                  <!--数据列表-->
+			                  <table id="dataList" class="table table-bordered table-striped table-hover dataTable">
+			                      <thead>
+			                          <tr>
+			                              <th class="" style="padding-right:0px">
+			                                  <input id="selall" type="checkbox" class="icheckbox_square-blue">
+			                              </th>
+										  <th class="sorting_asc" width="50">订单ID</th>
+                                          <th class="sorting">金额</th>
+                                          <th class="sorting" width="80">交易状态</th>
+                                          <th class="sorting" width="170">发货时间</th>
+                                          <th class="sorting" width="80">评价状态</th>
+                                          <th class="sorting">物流单号</th>
+                                          <th class="sorting">留言</th>
+                                          <th class="text-center">操作</th>
+			                          </tr>
+			                      </thead>
+			                      <tbody>
+			                          <tr ng-repeat="entity in list">
+			                              <td><input ng-click="updateSelection($event, entity.id)" type="checkbox"></td>
+				                          <td>{{entity.orderId}}</td>
+									      <td>{{entity.tbOrder.payment}}</td>
+									      <td>{{orderStatus[entity.tbOrder.status]}}</td>
+                                          <td>{{entity.tbOrder.consignTime | date:'yyyy-MM-dd hh:mm:ss'}}</td>
+									      <td>{{orderRate[entity.tbOrder.buyerRate]}}</td>
+									      <td>{{entity.tbOrder.shippingCode}}</td>
+									      <td>{{entity.tbOrder.buyerMessage}}</td>
+		                                  <td class="text-center">
+                                              <button type="button" ng-click="findOne(entity.orderId)" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#editModal">详情</button>
+                                              <button type="button" ng-click="findOne(entity.orderId)" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#updateModal">修改</button>
+                                          </td>
+			                          </tr>
+			                      </tbody>
+			                  </table>
+			                  <!--数据列表/-->
+
+
+                        </div>
+                        <!-- 数据表格 /-->
+                       <!-- <tm-pagination conf="paginationConf"></tm-pagination>-->
+
+                     </div>
+                    <!-- /.box-body -->
+  <!-- 详情窗口 -->
+  <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                  <h3 id="myModalLabel">订单详情</h3>
+              </div>
+              <div class="modal-body">
+                  <table class="table table-bordered table-striped" width="800px">
+                      <tr>
+                          <td>实付金额</td>
+                          <td>{{enery.tbOrder.payment}}</td>
+                      </tr>
+                      <tr>
+                          <td>支付类型</td>
+                          <td>{{paymentType[enery.tbOrder.paymentType]}}</td>
+                      </tr>
+                      <tr>
+                          <td>邮费</td>
+                          <td>{{enery.tbOrder.postFee}}</td>
+                      </tr>
+                      <tr>
+                          <td>交易状态</td>
+                          <td>{{orderStatus[enery.tbOrder.status]}}</td>
+                      </tr>
+                      <tr>
+                          <td>订单创建时间</td>
+                          <td>{{enery.tbOrder.createTime | date:'yyyy-MM-dd hh:mm:ss'}}</td>
+                      </tr>
+                      <tr>
+                          <td>订单更新时间</td>
+                          <td>{{enery.tbOrder.updateTime | date:'yyyy-MM-dd hh:mm:ss'}}</td>
+                      </tr>
+<!--                      <tr>
+                          <td>付款时间</td>
+                          <td>{{entity.paymentTime | date:'yyyy-MM-dd hh:mm:ss'entity.paymentTime}}</td>
+                      </tr>
+                      <tr>
+                          <td>发货时间</td>
+                          <td>{{entity.consignTime | date:'yyyy-MM-dd hh:mm:ss'}}</td>
+                      </tr>
+                      <tr>
+                          <td>物流名称</td>
+                          <td>{{entity.shippingName}}</td>
+                      </tr>
+                      <tr>
+                          <td>物流单号</td>
+                          <td>{{entity.shippingCode}}</td>
+                      </tr>
+                      <tr>
+                          <td>买家id</td>
+                          <td>{{entity.userId}}</td>
+                      </tr>
+                      <tr>
+                          <td>买家留言</td>
+                          <td>{{entity.buyerMessage}}</td>
+                      </tr>
+                      <tr>
+                          <td>买家昵称</td>
+                          <td>{{entity.buyerNick}}</td>
+                      </tr>
+                      <tr>
+                          <td>买家是否已经评价</td>
+                          <td>{{orderRate[entity.buyerRate]}}</td>
+                      </tr>
+                      <tr>
+                          <td>收货人地区名称(省，市，县)街道</td>
+                          <td>{{entity.receiverAreaName}}</td>
+                      </tr>
+                      <tr>
+                          <td>收货人手机</td>
+                          <td>{{entity.receiverMobile}}</td>
+                      </tr>
+                      <tr>
+                          <td>收货人邮编</td>
+                          <td>{{entity.receiverZipCode}}</td>
+                      </tr>
+                      <tr>
+                          <td>收货人名称</td>
+                          <td>{{entity.receiver}}</td>
+                      </tr>
+                      <tr>
+                          <td>发票类型</td>
+                          <td>{{invoiceType[entity.invoiceType]}}</td>
+                      </tr>
+                      <tr>
+                          <td>订单来源</td>
+                          <td>{{sourceType[entity.sourceType]}}</td>
+                      </tr>-->
+                  </table>
+              </div>
+              <div class="modal-footer">
+                  <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+              </div>
+          </div>
+      </div>
+  </div>
+  <!--修改窗口-->
+  <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                  <h3 id="OurModalLabel">订单修改</h3>
+                  {{enery.orderId}}
+              </div>
+              <div class="modal-body">
+                  <table class="table table-bordered table-striped" width="800px">
+                      <tr>
+                          <td>实付金额</td>
+                          <td>{{enery.tbOrder.payment}}</td>
+                      </tr>
+                      <tr>
+                          <td>支付类型</td>
+                          <td>{{paymentType[enery.tbOrder.paymentType]}}</td>
+                      </tr>
+                      <tr>
+                          <td>邮费</td>
+                          <td><input class="form-control" ng-model="enery.tbOrder.postFee"  readonly="readonly"></td>
+                      </tr>
+                      <tr>
+                          <td>收货人地区名称(省，市，县)街道</td>
+                          <td><input class="form-control" ng-model="enery.tbOrder.receiverAreaName" ></td>
+                      </tr>
+                      <tr>
+                          <td>交易状态</td>
+                          <td>{{orderStatus[enery.tbOrder.status]}}</td>
+                      </tr>
+                      <tr>
+                          <td>订单创建时间</td>
+                          <td>{{enery.tbOrder.createTime | date:'yyyy-MM-dd hh:mm:ss'}}</td>
+                      </tr>
+                      <!--<tr>
+                          <td>订单更新时间</td>
+                          <td>{{entity.updateTime | date:'yyyy-MM-dd hh:mm:ss'}}</td>
+                      </tr>
+                                            <tr>
+                                                <td>付款时间</td>
+                                                <td>{{entity.paymentTime | date:'yyyy-MM-dd hh:mm:ss'entity.paymentTime}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>发货时间</td>
+                                                <td>{{entity.consignTime | date:'yyyy-MM-dd hh:mm:ss'}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>物流名称</td>
+                                                <td>{{entity.shippingName}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>物流单号</td>
+                                                <td>{{entity.shippingCode}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>买家id</td>
+                                                <td>{{entity.userId}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>买家留言</td>
+                                                <td>{{entity.buyerMessage}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>买家昵称</td>
+                                                <td>{{entity.buyerNick}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>买家是否已经评价</td>
+                                                <td>{{orderRate[entity.buyerRate]}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>收货人地区名称(省，市，县)街道</td>
+                                                <td>{{entity.receiverAreaName}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>收货人手机</td>
+                                                <td>{{entity.receiverMobile}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>收货人邮编</td>
+                                                <td>{{entity.receiverZipCode}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>收货人名称</td>
+                                                <td>{{entity.receiver}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>发票类型</td>
+                                                <td>{{invoiceType[entity.invoiceType]}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>订单来源</td>
+                                                <td>{{sourceType[entity.sourceType]}}</td>
+                                            </tr>-->
+                  </table>
+              </div>
+              <div class="modal-footer">
+                  <button class="btn btn-success" data-dismiss="modal" ng-click="update(enery.orderId)" aria-hidden="true">保存</button>
+                  <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!--<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" >
+          <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                  <h3 id="myModalLabel">商家详情</h3>
+              </div>
+              <div class="modal-body">
+
+                  <ul class="nav nav-tabs">
+                      <li class="active"><a href="#home" data-toggle="tab">基本信息</a></li>
+                      <li><a href="#linkman" data-toggle="tab">时间信息</a></li>
+                      <li><a href="#certificate" data-toggle="tab">物流信息</a></li>
+                      <li><a href="#ceo" data-toggle="tab">买家信息</a></li>
+                      <li><a href="#bank" data-toggle="tab">其他信息</a></li>
+                  </ul>
+                  &lt;!&ndash; 选项卡开始 &ndash;&gt;
+                  <div id="myTabContent" class="tab-content">
+                      <div class="tab-pane active in" id="home">
+                          <br>
+                          <table class="table table-bordered table-striped"  width="800px">
+                              <tr>
+                                  <td>实付金额</td>
+                                  <td>{{entity.payment}}</td>
+                              </tr>
+                              <tr>
+                                  <td>支付类型</td>
+                                  <td>{{paymentType[entity.paymentType]}}</td>
+                              </tr>
+                              <tr>
+                                  <td>邮费</td>
+                                  <td>{{entity.postFee}}</td>
+                              </tr>
+                              <tr>
+                                  <td>交易状态</td>
+                                  <td>{{orderStatus[entity.status]}}</td>
+                              </tr>
+                          </table>
+                      </div>
+                      <div class="tab-pane fade" id="linkman">
+                          <br>
+                          <table class="table table-bordered table-striped" >
+                              <tr>
+                                  <td>订单创建时间</td>
+                                  <td>{{entity.createTime | date:'yyyy-MM-dd hh:mm:ss'}}</td>
+                              </tr>
+                              <tr>
+                                  <td>订单更新时间</td>
+                                  <td>{{entity.updateTime | date:'yyyy-MM-dd hh:mm:ss'}}</td>
+                              </tr>
+                              <tr>
+                                  <td>付款时间</td>
+                                  <td>{{entity.paymentTime | date:'yyyy-MM-dd hh:mm:ss'entity.paymentTime}}</td>
+                              </tr>
+                              <tr>
+                                  <td>发货时间</td>
+                                  <td>{{entity.consignTime | date:'yyyy-MM-dd hh:mm:ss'}}</td>
+                              </tr>
+                          </table>
+                      </div>
+                      <div class="tab-pane fade" id="certificate">
+                          <br>
+                          <table class="table table-bordered table-striped" >
+                              <tr>
+                                  <td>物流名称</td>
+                                  <td>{{entity.shippingName}}</td>
+                              </tr>
+                              <tr>
+                                  <td>物流单号</td>
+                                  <td>{{entity.shippingCode}}</td>
+                              </tr>
+                          </table>
+                      </div>
+                      <div class="tab-pane fade" id="ceo">
+                          <br>
+                          <table class="table table-bordered table-striped" >
+                              <tr>
+                                  <td>买家id</td>
+                                  <td>{{entity.userId}}</td>
+                              </tr>
+                              <tr>
+                                  <td>买家留言</td>
+                                  <td>{{entity.buyerMessage}}</td>
+                              </tr>
+                              <tr>
+                                  <td>买家昵称</td>
+                                  <td>{{entity.buyerNick}}</td>
+                              </tr>
+                              <tr>
+                                  <td>买家是否已经评价</td>
+                                  <td>{{orderRate[entity.buyerRate]}}</td>
+                              </tr>
+                              <tr>
+                                  <td>收货人地区名称(省，市，县)街道</td>
+                                  <td>{{entity.receiverAreaName}}</td>
+                              </tr>
+                              <tr>
+                                  <td>收货人手机</td>
+                                  <td>{{entity.receiverMobile}}</td>
+                              </tr>
+                              <tr>
+                                  <td>收货人邮编</td>
+                                  <td>{{entity.receiverZipCode}}</td>
+                              </tr>
+                              <tr>
+                                  <td>收货人名称</td>
+                                  <td>{{entity.receiver}}</td>
+                              </tr>
+                          </table>
+                      </div>
+                      <div class="tab-pane fade" id="bank">
+                          <br>
+                          <table class="table table-bordered table-striped" >
+                              <tr>
+                                  <td>发票类型</td>
+                                  <td>{{invoiceType[entity.invoiceType]}}</td>
+                              </tr>
+                              <tr>
+                                  <td>订单来源</td>
+                                  <td>{{sourceType[entity.sourceType]}}</td>
+                              </tr>
+                          </table>
+                      </div>
+                  </div>
+                  &lt;!&ndash; 选项卡结束 &ndash;&gt;
+              </div>
+              <div class="modal-footer">
+                  <button class="btn btn-success" data-dismiss="modal" ng-click="save()" aria-hidden="true">保存</button>
+                  <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+              </div>
+          </div>
+      </div>
+  </div>-->
+  <!-- 编辑窗口结束 -->
+</body>
+
+</html>

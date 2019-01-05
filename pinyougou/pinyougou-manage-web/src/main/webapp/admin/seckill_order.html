@@ -33,7 +33,7 @@
 <!-- .box-body -->
 
 <div class="box-header with-border">
-    <h3 class="box-title">秒杀订单管理</h3>
+    <h3 class="box-title">订单管理</h3>
 </div>
 
 <div class="box-body">
@@ -45,7 +45,7 @@
         <div class="pull-left">
             <div class="form-group form-inline">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-default" ng-click="findPage()"><i class="fa fa-trash-o"></i> 全部订单</button>
+                    <button type="button" class="btn btn-default" onclick="window.location.reload();"><i class="fa fa-trash-o"></i> 全部订单</button>
                     <button type="button" class="btn btn-default" title="待支付" ng-click="findStatus('1')"><i class="fa fa-check"></i> 待支付</button>
                     <button type="button" class="btn btn-default" title="待发货" ng-click="findStatus('3')"><i class="fa fa-check"></i> 待发货</button>
                     <button type="button" class="btn btn-default" title="待评价" ng-click="findStatus('7')"><i class="fa fa-file-o"></i> 待评价</button>

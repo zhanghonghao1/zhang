@@ -43,14 +43,28 @@ public interface OrderService extends BaseService<TbOrder> {
 
     /**
      * 查询全部订单并处理id过长
+     * @return
+     */
+    List<ChangeLong> findAllOrder();
+
+    /**
+     * 查询全部订单并处理id过长(商家)
      * @param order
      * @return
      */
-    List<ChangeLong> findAllOrder(TbOrder order);
+    List<ChangeLong> findAllOrderByUser(TbOrder order);
 
     /**
      * 修改地址
      * @param
      */
     void updateArea(TbOrder tbOrder,Long id);
+
+    /**
+     *状态查询
+     * @param value
+     * @return
+     */
+    List<ChangeLong> findStatus(String value);
+
 }

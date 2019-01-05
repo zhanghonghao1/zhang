@@ -57,6 +57,35 @@ public class OrderServiceImpl extends BaseServiceImpl<TbOrder> implements OrderS
     }
 
     /**
+     * 状态查询
+     * @param value
+     * @return
+     */
+    @Override
+    public  List<ChangeLong> findStatus(String value) {
+        try {
+            //根据条件查询
+            Example example=new Example(TbOrder.class);
+            example.createCriteria().andEqualTo("status",value);
+            //查询
+            List<TbOrder> tbOrderList = orderMapper.selectByExample(example);
+            List<ChangeLong> changeLongs=new ArrayList<>();
+            for (TbOrder tbOrder : tbOrderList) {
+                ChangeLong changeLong=new ChangeLong();
+                String orderId = tbOrder.getOrderId().toString();
+                changeLong.setOrderId(orderId);
+                changeLong.setTbOrder(tbOrder);
+                changeLongs.add(changeLong);
+
+            }
+            return changeLongs;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    /**
      * 修改地址
      *
      * @param
@@ -75,11 +104,37 @@ public class OrderServiceImpl extends BaseServiceImpl<TbOrder> implements OrderS
     /**
      * 查询全部订单并处理id过长
      *
+     * @return
+     */
+    @Override
+    public List<ChangeLong> findAllOrder() {
+        try {
+            //根据条件查询
+            List<TbOrder> tbOrderList = orderMapper.selectAll();
+            List<ChangeLong> changeLongs=new ArrayList<>();
+            for (TbOrder tbOrder : tbOrderList) {
+                ChangeLong changeLong=new ChangeLong();
+                String orderId = tbOrder.getOrderId().toString();
+                changeLong.setOrderId(orderId);
+                changeLong.setTbOrder(tbOrder);
+                changeLongs.add(changeLong);
+
+            }
+            return changeLongs;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * 查询全部订单并处理id过长(商家)
+     *
      * @param order
      * @return
      */
     @Override
-    public List<ChangeLong> findAllOrder(TbOrder order) {
+    public List<ChangeLong> findAllOrderByUser(TbOrder order) {
         try {
             Example example = new Example(TbOrder.class);
             //限定只能查询自家商家的订单

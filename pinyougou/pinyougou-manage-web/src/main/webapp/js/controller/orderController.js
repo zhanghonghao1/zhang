@@ -1,12 +1,12 @@
 /*自定义controller*/
-app.controller("seckillorderController",function ($scope,$filter,$controller,seckillorderService) {
+app.controller("orderController",function ($scope,$filter,$controller,orderService) {
 
     //继承brandController；参数1：要继承的处理器名称，参数2：传递本处理器的信息到父处理器
     $controller("baseController",{$scope:$scope});
 
     // 分页查询全部列表
     $scope.findPage = function (page, rows) {
-        seckillorderService.findPage(page,rows).success(function (response) {
+        orderService.findPage(page,rows).success(function (response) {
             // 更新记录列表
             $scope.list = response.rows;
             // 更新总记录数
@@ -16,7 +16,7 @@ app.controller("seckillorderController",function ($scope,$filter,$controller,sec
 
     // 保存
     $scope.update = function (id) {
-        seckillorderService.update($scope.enery.tbOrder,id).success(function (response) {
+        orderService.update($scope.enery.tbOrder,id).success(function (response) {
             //刷新显示列表(调用上面的加载方法)
             if (response.success) {
                 alert(response.message);
@@ -28,17 +28,17 @@ app.controller("seckillorderController",function ($scope,$filter,$controller,sec
         })
     };
 
-    //状态查询
-    $scope.findStatus=function (value) {
-        seckillorderService.findStatus(value).success(function (response) {
-            $scope.list = response;
+    //根据品牌id查询品牌数据
+    $scope.findOne=function (id) {
+        orderService.findOne(id).success(function (response) {
+            $scope.enery=response;
         });
     };
 
-    //根据品牌id查询品牌数据
-    $scope.findOne=function (id) {
-        seckillorderService.findOne(id).success(function (response) {
-            $scope.enery=response;
+    //状态查询
+    $scope.findStatus=function (value) {
+        orderService.findStatus(value).success(function (response) {
+            $scope.list = response;
         });
     };
 
@@ -46,15 +46,15 @@ app.controller("seckillorderController",function ($scope,$filter,$controller,sec
     //定义一个没有查询条件的对象,
     $scope.searchEntity={};
     $scope.search=function (page,rows) {
-        seckillorderService.search(page,rows,$scope.searchEntity).success(function (response) {
+        orderService.search(page,rows,$scope.searchEntity).success(function (response) {
             $scope.list=response.rows;
             $scope.paginationConf.totalItems=response.total;
         })
     };
 
     //显示全部数据
-    $scope.findAllSeckillOrder=function () {
-        seckillorderService.findAllSeckillOrder().success(function (response) {
+    $scope.findAllOrder=function () {
+        orderService.findAllOrder().success(function (response) {
             $scope.list = response;
         });
     };
@@ -68,6 +68,6 @@ app.controller("seckillorderController",function ($scope,$filter,$controller,sec
     //发票类型
     $scope.invoiceType=["普通发票","电子发票","增值税发票"];
     //订单来源
-    $scope.sourceType=["","app端","pc端","M端","微信端","手机qq端"];
+    $scope.sourceType=["app端","pc端","M端","微信端","手机qq端"];
 
 });
